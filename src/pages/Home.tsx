@@ -1,0 +1,95 @@
+import { Link } from 'react-router'
+import { motion } from 'framer-motion'
+import { ArrowRight, Network, ShieldCheck, Vote } from 'lucide-react'
+import { TRACKS } from '@/lib/tracks'
+import TrackCard from '@/components/TrackCard'
+import { FORGE_LABS } from '@/data/labs'
+
+export default function Home() {
+  return (
+    <div className="mx-auto max-w-app px-6 pb-24 pt-24 lg:px-12">
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        className="mx-auto max-w-3xl text-center"
+      >
+        <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent">
+          byzantine · a correctness course
+        </p>
+        <h1 className="mt-5 text-5xl font-semibold tracking-tight text-text-1 sm:text-6xl">
+          The network lies.
+          <br />
+          <span className="text-accent">Build systems that survive it.</span>
+        </h1>
+        <p className="mx-auto mt-6 max-w-xl text-body-lg text-text-2">
+          From partial failure to Raft: distributed-systems correctness, taught bottom-up.
+          Real Rust labs graded by adversarial network sims, a live five-node cluster in your
+          browser, and a capstone that makes you prove linearizability under partitions.
+          No servers, no accounts — everything runs on your machine.
+        </p>
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <Link
+            to="/curriculum"
+            className="inline-flex items-center gap-2 rounded-md border border-accent/60 bg-accent/10 px-5 py-2.5 font-mono text-sm text-accent transition-colors hover:bg-accent/20"
+          >
+            start the curriculum <ArrowRight className="h-4 w-4" />
+          </Link>
+          <Link
+            to="/cluster"
+            className="inline-flex items-center gap-2 rounded-md border border-line bg-surface-1 px-5 py-2.5 font-mono text-sm text-text-2 transition-colors hover:text-text-1"
+          >
+            <Network className="h-4 w-4" /> open the cluster
+          </Link>
+        </div>
+        <div className="mt-6 flex flex-wrap justify-center gap-2 font-mono text-[11px] text-text-3">
+          {['rust + wasm', 'local-first', 'no servers', 'agent-friendly'].map((chip) => (
+            <span key={chip} className="rounded-full border border-line px-2.5 py-1">{chip}</span>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* tracks */}
+      <div className="mt-20 grid gap-4 md:grid-cols-2">
+        {TRACKS.map((t, i) => (
+          <motion.div
+            key={t.id}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.15 + i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <TrackCard track={t} />
+          </motion.div>
+        ))}
+      </div>
+
+      {/* lab + capstone cards */}
+      <div className="mt-8 grid gap-4 md:grid-cols-2">
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.4 }}>
+          <Link to="/labs" className="group block rounded-lg border border-line bg-surface-1 p-6 transition-colors hover:border-accent/50">
+            <div className="flex items-center gap-2.5">
+              <Vote className="h-5 w-5 text-accent" />
+              <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-text-3">the forge</p>
+            </div>
+            <p className="mt-3 text-h4 font-medium text-text-1">{FORGE_LABS[0].title}</p>
+            <p className="mt-2 text-body-sm text-text-2">{FORGE_LABS[0].hook}</p>
+            <p className="mt-4 font-mono text-[11px] text-accent">{FORGE_LABS.length} lab{FORGE_LABS.length > 1 ? 's' : ''} live · graded in-browser <ArrowRight className="inline h-3 w-3" /></p>
+          </Link>
+        </motion.div>
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.48 }}>
+          <div className="block rounded-lg border border-line bg-surface-1 p-6 opacity-80">
+            <div className="flex items-center gap-2.5">
+              <ShieldCheck className="h-5 w-5 text-amber" />
+              <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-text-3">the capstone · ahead</p>
+            </div>
+            <p className="mt-3 text-h4 font-medium text-text-1">A linearizable KV store</p>
+            <p className="mt-2 text-body-sm text-text-2">
+              Your Raft, your log, your state machine — replicated across The Cluster and graded
+              while the knife falls. It arrives with the rest of T1.
+            </p>
+          </div>
+        </motion.div>
+      </div>
+    </div>
+  )
+}

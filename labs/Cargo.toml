@@ -1,0 +1,3 @@
+[workspace]
+members = ["kit", "echo-node"]
+resolver = "2"
