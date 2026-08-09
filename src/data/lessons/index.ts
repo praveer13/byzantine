@@ -1,6 +1,7 @@
 /**
  * Lesson registry — byzantine content source of truth.
- * Track ids: t0 (Failure & Time), t1 (Consensus).
+ * Track ids: t0 (Failure & Time), t1 (Consensus), t2 (Consistency &
+ * Transactions), t3 (Production Anatomy).
  */
 
 import type { LucideIcon } from 'lucide-react'
@@ -10,16 +11,31 @@ import type { Lesson, SimId, TrackId } from './types'
 // T0 — Failure & Time
 import t0l1 from './t0/partial-failure'
 import t0l2 from './t0/time-and-order'
+import t0l3 from './t0/failure-detectors-and-timeouts'
+import t0l4 from './t0/retries-idempotency'
 
 // T1 — Consensus
 import t1l1 from './t1/leader-election'
+import t1l2 from './t1/raft-replication'
+import t1l3 from './t1/split-brain-and-safety'
+
+// T2 — Consistency & Transactions
+import t2l1 from './t2/consistency-models'
+import t2l2 from './t2/distributed-transactions'
+
+// T3 — Production Anatomy
+import t3l1 from './t3/production-anatomy'
+import t3l2 from './t3/reading-jepsen'
+import t3l3 from './t3/drills-intro'
 
 export const LESSONS_BY_TRACK: Record<TrackId, Lesson[]> = {
-  t0: [t0l1, t0l2],
-  t1: [t1l1],
+  t0: [t0l1, t0l2, t0l3, t0l4],
+  t1: [t1l1, t1l2, t1l3],
+  t2: [t2l1, t2l2],
+  t3: [t3l1, t3l2, t3l3],
 }
 
-export const TRACK_IDS: TrackId[] = ['t0', 't1']
+export const TRACK_IDS: TrackId[] = ['t0', 't1', 't2', 't3']
 
 /** All lessons in curriculum order. */
 export const ALL_LESSONS: Lesson[] = TRACK_IDS.flatMap((id) => LESSONS_BY_TRACK[id])
@@ -77,6 +93,7 @@ export const TRACK_EXTRAS: Record<TrackId, TrackExtras> = {
       'Explain why "the other machine is down" is indistinguishable from "the network is slow".',
       'Choose timeouts with the trade they actually are: availability vs correctness.',
       'Order events with happens-before and Lamport clocks — and know what they cannot tell you.',
+      'Make retries safe: idempotency keys, dedup tables, and backoff with jitter.',
     ],
     requires: 'base of the stack · no prerequisites',
     sideNote: '// lesson 1 is the one that rewires your instincts',
@@ -87,10 +104,33 @@ export const TRACK_EXTRAS: Record<TrackId, TrackExtras> = {
     outcomes: [
       'Prove to yourself why a majority quorum intersects any other.',
       'Walk a Raft election, a replication round, and a leader change without losing a committed entry.',
-      'Read Jepsen analyses without flinching: linearizability, split-brain, and the anomalies with names.',
+      'Explain why a leader may only commit current-term entries by counting replicas.',
+      'Snapshot a log without losing history — and catch a straggler up with InstallSnapshot.',
     ],
     requires: 'requires T0 · partial failure & clocks',
-    sideNote: '// lab 1 is where the paper stops being paper',
+    sideNote: '// lab 3 is where the paper stops being paper',
+  },
+  t2: {
+    pitch:
+      'The mechanism is built; now the contract. Consistency models are the spec your replication has to satisfy, and distributed transactions are what happens when atomicity itself has to survive a coordinator dying mid-sentence.',
+    outcomes: [
+      'Place any system on the spectrum: linearizable, sequential, causal, eventual — and say what clients can rely on.',
+      'State CAP and PACELC as engineering trades, not slogans.',
+      'Walk 2PC through its failure matrix and explain why modern systems replicate the transaction log instead.',
+    ],
+    requires: 'requires T1 · consensus & replication',
+    sideNote: '// lab 6 grades exactly this: reads as proofs',
+  },
+  t3: {
+    pitch:
+      'The capstone of the mind: reading real systems. Five production anatomies, the Jepsen method, and three incident drills where the telemetry is all you get.',
+    outcomes: [
+      'See the one skeleton — quorum, log, state machine, snapshots — inside etcd, ZooKeeper, Kafka, Spanner, and TigerBeetle.',
+      'Read a Jepsen analysis: history, nemesis, checker, counterexample.',
+      'Diagnose split-brain, quorum loss, and flapping leaders from raw telemetry.',
+    ],
+    requires: 'requires T2 · consistency models',
+    sideNote: '// the drills are the oral exam',
   },
 }
 

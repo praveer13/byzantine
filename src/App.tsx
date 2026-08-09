@@ -7,6 +7,7 @@ import Lesson from '@/pages/Lesson'
 import Forge from '@/pages/Forge'
 import ForgeLab from '@/pages/ForgeLab'
 import Cluster from '@/pages/Cluster'
+import Drills from '@/pages/Drills'
 import Progress from '@/pages/Progress'
 import NotFound from '@/pages/NotFound'
 
@@ -25,6 +26,7 @@ export default function App() {
         <Route path="/labs" element={<Forge />} />
         <Route path="/labs/:labId" element={<ForgeLab />} />
         <Route path="/cluster" element={<Cluster />} />
+        <Route path="/drills" element={<Drills />} />
         <Route path="/progress" element={<Progress />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

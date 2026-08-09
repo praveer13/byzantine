@@ -11,6 +11,7 @@ const NAV_LINKS = [
   { to: '/curriculum', label: 'Curriculum' },
   { to: '/cluster', label: 'Cluster' },
   { to: '/labs', label: 'Labs' },
+  { to: '/drills', label: 'Drills' },
   { to: '/progress', label: 'Progress' },
 ]
 

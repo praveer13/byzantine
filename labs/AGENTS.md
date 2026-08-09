@@ -6,7 +6,7 @@ is one lab from the byzantine Forge (https://byzantine.play.naigap.com/labs).
 ## What this is
 
 A Rust crate with ONE student-edited file (marked `TODO(you)`) and a grading
-harness (`src/lib.rs`) containing six checks. The same checks run in
+harness (`src/lib.rs`) containing the checks. The same checks run in
 `cargo test` and in the browser when the student drops the compiled wasm onto
 the lab page.
 
@@ -24,7 +24,7 @@ the lab page.
 2. Read the failing check's message first; it usually says exactly what's
    wrong (e.g. overlap, leak, SLO miss).
 3. Prefer teaching the invariant over fixing the symptom: this course is
-   about memory, scheduling, and honesty of accounting.
+   about partial failure, quorums, and honesty about what is committed.
 4. If the student asks for the answer outright, give the *design* (data
    structure + invariants), not the code. Example acceptable answer: "an
    address-ordered free list; alloc = first-fit with split; free = insert +

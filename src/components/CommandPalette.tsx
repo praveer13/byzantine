@@ -18,9 +18,9 @@ interface Item {
 const INDEX: Item[] = [
   { id: 'home', group: 'Pages', title: 'Home', crumb: '~/', to: '/', keywords: ['landing', 'start'] },
   { id: 'curriculum', group: 'Pages', title: 'Curriculum', crumb: '~/curriculum', to: '/curriculum', keywords: ['tracks', 'lessons', 'map'] },
-  { id: 'lab', group: 'Pages', title: 'Lab', crumb: '~/lab', to: '/lab', keywords: ['simulators', 'playground'] },
-  { id: 'capstone', group: 'Pages', title: 'Capstone', crumb: '~/capstone', to: '/capstone', keywords: ['project', 'engine', 'build'] },
-  { id: 'glossary', group: 'Pages', title: 'Glossary', crumb: '~/glossary', to: '/glossary', keywords: ['terms', 'isomorphism', 'concepts'] },
+  { id: 'cluster', group: 'Pages', title: 'The Cluster', crumb: '~/cluster', to: '/cluster', keywords: ['simulator', 'raft', 'partition', 'election'] },
+  { id: 'labs', group: 'Pages', title: 'Labs', crumb: '~/labs', to: '/labs', keywords: ['forge', 'rust', 'wasm', 'graded'] },
+  { id: 'drills', group: 'Pages', title: 'Partition Drills', crumb: '~/drills', to: '/drills', keywords: ['incident', 'telemetry', 'diagnosis', 'capstone'] },
   { id: 'progress', group: 'Pages', title: 'Progress', crumb: '~/progress', to: '/progress', keywords: ['dashboard', 'xp', 'rank', 'streak'] },
   ...TRACKS.map<Item>((t) => ({
     id: `track-${t.id}`,
@@ -30,13 +30,13 @@ const INDEX: Item[] = [
     to: `/tracks/${t.id}`,
     keywords: [t.name.toLowerCase(), t.code.toLowerCase()],
   })),
-  { id: 'track-capstone', group: 'Tracks', title: `${CAPSTONE.code} — ${CAPSTONE.name}`, crumb: 'capstone · 7 steps', to: '/capstone', keywords: ['capstone', 'inference engine'] },
+  { id: 'track-capstone', group: 'Tracks', title: `${CAPSTONE.code} — ${CAPSTONE.name}`, crumb: 'capstone lab · linearizable-kv', to: '/labs/linearizable-kv', keywords: ['capstone', 'linearizable', 'kv'] },
   ...SIMS.map<Item>((s) => ({
     id: `sim-${s.id}`,
     group: 'Simulators',
     title: s.name,
     crumb: `simulator · used in ${s.usedIn}`,
-    to: `/lab/${s.id}`,
+    to: `/${s.id}`,
     keywords: [s.name.toLowerCase(), s.hook.toLowerCase()],
   })),
 ]

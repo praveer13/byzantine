@@ -1,6 +1,6 @@
 # byzantine — build plan, design, and resume state
 
-> Crash-safe checkpoint. Updated 2026-08-08. If a session dies, resume from
+> Crash-safe checkpoint. Updated 2026-08-09. If a session dies, resume from
 > **RESUME POINT** below; everything needed is in this file + the repo.
 
 ## Goal
@@ -27,25 +27,44 @@ domain registered, cert provisioning.
 | # | slug | dir | state |
 |---|------|-----|-------|
 | 01 | echo-node | labs/echo-node | ✅ DONE — shipped in v0, verified green on live site |
-| 02 | kv-store | labs/kv-store | ✅ DONE — sequential KV, template 5 red / solution 5 green, wasms at /tmp/{template,solution}-kv.wasm |
-| 03 | election | labs/election | ✅ DONE — leader election, template 5 red / solution 5 green, wasms at /tmp/{template,solution}-election.wasm |
-| 04 | raft-log | labs/raft-log | ✅ solution 5 green + wasm at /tmp/solution-raftlog.wasm. ⚠️ TEMPLATE RED NOT YET VERIFIED — restore template (it's in git/repo at labs/raft-log/src/raft.rs? NO — currently overwritten with solution; template content was written via write tool, restore from git if committed, else rewrite) |
-| 05 | snapshots | labs/snapshots | 🔴 IN PROGRESS — harness + template + solution written; `check_compact_bounds` FAILS (panic message not yet captured; run `cargo test -p snapshots compact_bounds` WITHOUT tail-cutting to see panic). One earlier full run HUNG (was cancelled) — suspect an unbounded retry or degenerate compact loop |
-| 06 | linearizable-kv | — | ⬜ NOT STARTED — capstone lab: client ops through Raft, read-write register linearizable under partition |
+| 02 | kv-store | labs/kv-store | ✅ DONE — sequential KV, template 5 red / solution 5 green, wasm ABI-verified |
+| 03 | election | labs/election | ✅ DONE — leader election, template 5 red / solution 5 green, wasm ABI-verified |
+| 04 | raft-log | labs/raft-log | ✅ DONE — template rewritten (was lost), 5 red / solution 5 green, wasm ABI-verified |
+| 05 | snapshots | labs/snapshots | ✅ DONE — solution fixed (see below), template rewritten, 4 red / solution 4 green, wasm ABI-verified |
+| 06 | linearizable-kv | labs/linearizable-kv | ✅ DONE — capstone built: put/cas through the log, get() replays committed prefix only; 4 checks (put_get_basic, cas_correctness, stale_leader_fence, linearizable_storm); template 4 red / solution 4 green, wasm ABI-verified |
+
+### Lab 05 bug that was killing compact_bounds (fixed 2026-08-09)
+
+Symptom was "hang"; actually OOM (SIGKILL, confirmed in dmesg). Root cause:
+on an AppendEntries seam mismatch the follower replied `match_index:
+last_log_index()` (HIGH), so the leader never fell back to InstallSnapshot
+and re-sent AppendEntries; each reply was broadcast ×4 by the harness →
+exponential message ping-pong. Fix (now in _solutions/snapshots/raft.rs and
+carried into lab 06): follower reports its own LOW seam when the anchor is
+beyond it (and seam−1 on seam-term mismatch); follower AHEAD of the anchor
+skips snapshot-covered entries; stale snapshots never move the seam
+backward; leader's match_index no longer double-counts self.
 
 ### Remaining work after labs
 
-1. **9 lessons**: t0.13 failure-detectors-and-timeouts, t0.14 retries-idempotency,
-   t1.12 raft-replication, t1.13 split-brain-and-safety, t2.11 consistency-models,
-   t2.12 distributed-transactions, t3.11 production-anatomy (etcd/ZK/Kafka/
-   Spanner/TigerBeetle reading), t3.12 reading-jepsen, t3.13 drills-intro.
-2. **Registry updates**: src/data/labs.ts entries (5 new labs), track.ts
-   lesson wiring, counts.
-3. **Partition Drills page**: 3 scripted incident quizzes (Fleet Week incident
-   card pattern, static telemetry, no wasm) — the "capstone" alongside lab 06.
-4. **Pack zips** (scripts/pack-labs.mjs), update labs/README.md + AGENTS.md.
-5. Build + lint + browser-verify every lab page upload flow.
-6. Push + deploy + verify live.
+1. ~~**9 lessons**~~ ✅ DONE — all 9 written (t0.l3/l4, t1.l2/l3, t2.l1/l2,
+   t3.l1/l2/l3) under src/data/lessons/{t0,t1,t2,t3}/.
+2. ~~**Registry updates**~~ ✅ DONE — labs.ts (6 labs), tracks.ts (T0–T3 +
+   counts), lessons/index.ts (TrackId extended to t2/t3, TRACK_EXTRAS),
+   progress.ts TOTAL_LESSONS=12, Progress.tsx labs counter,
+   CommandPalette de-kernelspaced.
+3. ~~**Partition Drills page**~~ ✅ DONE — /drills, 3 incident cards
+   (stale-leader, quorum-loss, flapping-leader), static telemetry in
+   src/data/drills.ts, Fleet Week incident-card pattern, no wasm.
+4. ~~**Pack zips**~~ ✅ DONE — scripts/pack-labs.py packs all 6 labs
+   (SHARED + crate_files helpers); labs/README.md de-kernelspaced
+   (labs table, echo-node lane A), labs/AGENTS.md de-kernelspaced.
+5. ✅ tsc -b clean, eslint clean, bun run build clean, preview smoke
+   200s on all routes, zips verified to ship TEMPLATES not solutions.
+   Headless ABI verify (bun scripts/verify-wasm-lab.ts): all 5 new
+   solution wasms pass, all 5 template wasms trap as designed.
+   ⚠️ NOT done: real browser pass over each lab page upload flow.
+6. **Push + deploy + verify live** ← NEXT
 
 ## Design decisions (do not re-litigate)
 
@@ -108,18 +127,13 @@ domain registered, cert provisioning.
 
 ## RESUME POINT
 
-1. `cd /root/byzantine/labs && cargo test -p snapshots` — capture the
-   compact_bounds panic FULL output (no tail cut). Fix the bug. Likely
-   candidates: (a) index underflow in commit-advance loop
-   `idx - last_included_index - 1`, (b) the InstallSnapshot keep-calculation
-   (`keep_from` vs log.len), (c) compact() cut arithmetic when
-   commit_index < last_included_index + COMPACT_TO.
-2. Then: template red check for labs 04 + 05 (cp solution out, template
-   in, expect all checks FAIL; restore template afterward), build all wasms,
-   save to /tmp.
-3. Lab 06 (linearizable-kv) — design in "Lab arc" table: client ops
-   (get/put/cas) through leader, responses only after commit (linearizable
-   reads = read from committed state); checks: linearizable history under
-   partition churn, stale-leader rejection, CAS correctness. Reuse lab 05
-   harness shape; student implements apply() + client-facing commit wait.
-4. Lessons → registry → drills page → zips → verify → push (list above).
+Everything is built and verified locally. Only the ship step remains:
+
+1. `git add -A && git commit` (lab arc 04–06 + fix, 9 lessons, drills page,
+   registries, zips, this PLAN) and `git push origin master` → deploy.yml →
+   GitHub Pages.
+2. Verify live: https://byzantine.play.naigap.com — /curriculum shows T0–T3
+   (12 lessons), /labs shows 6 labs with working zip downloads, /drills runs,
+   one lab page upload flow with a solution wasm (in /tmp, or rebuild).
+3. Optional polish later: real browser pass per lab page; dist chunk-size
+   warning (code-split); the Cluster sim could grow lab-06-style get().

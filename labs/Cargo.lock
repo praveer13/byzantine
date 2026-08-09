@@ -28,6 +28,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "linearizable-kv"
+version = "0.1.0"
+dependencies = [
+ "kslab",
+]
+
+[[package]]
 name = "raft-log"
 version = "0.1.0"
 dependencies = [

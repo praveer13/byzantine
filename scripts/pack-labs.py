@@ -16,24 +16,33 @@ LABS = os.path.join(ROOT, "labs")
 OUT_DIR = os.path.join(ROOT, "public", "labs")
 
 # (zip name, lab crate, extra members to include)
+SHARED = [
+    "README.md",
+    ".gitignore",
+    "AGENTS.md",
+    "CLAUDE.md",
+    ".devcontainer/devcontainer.json",
+    "kit/Cargo.toml",
+    "kit/src/lib.rs",
+]
+
+
+def crate_files(lab: str, edit_file: str, tests_file: str) -> list[str]:
+    return [
+        f"{lab}/Cargo.toml",
+        f"{lab}/src/lib.rs",
+        f"{lab}/src/{edit_file}",
+        f"{lab}/tests/{tests_file}",
+    ]
+
+
 PACKAGES = [
-    (
-        "echo-node.zip",
-        "echo-node",
-        [
-            "README.md",
-            ".gitignore",
-            "AGENTS.md",
-            "CLAUDE.md",
-            ".devcontainer/devcontainer.json",
-            "kit/Cargo.toml",
-            "kit/src/lib.rs",
-            "echo-node/Cargo.toml",
-            "echo-node/src/lib.rs",
-            "echo-node/src/node.rs",
-            "echo-node/tests/node_tests.rs",
-        ],
-    ),
+    ("echo-node.zip", "echo-node", SHARED + crate_files("echo-node", "node.rs", "node_tests.rs")),
+    ("kv-store.zip", "kv-store", SHARED + crate_files("kv-store", "store.rs", "store_tests.rs")),
+    ("election.zip", "election", SHARED + crate_files("election", "raft.rs", "election_tests.rs")),
+    ("raft-log.zip", "raft-log", SHARED + crate_files("raft-log", "raft.rs", "raft_tests.rs")),
+    ("snapshots.zip", "snapshots", SHARED + crate_files("snapshots", "raft.rs", "snap_tests.rs")),
+    ("linearizable-kv.zip", "linearizable-kv", SHARED + crate_files("linearizable-kv", "raft.rs", "kv_tests.rs")),
 ]
 
 

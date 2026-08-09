@@ -4,7 +4,7 @@
  */
 
 import type { LucideIcon } from 'lucide-react'
-import { Network, ShieldCheck, Timer, Vote } from 'lucide-react'
+import { Database, Network, ScanSearch, ShieldCheck, Timer, Vote } from 'lucide-react'
 
 export interface TrackMeta {
   code: string
@@ -26,9 +26,9 @@ export const TRACKS: TrackMeta[] = [
     color: '#22D3EE',
     glyph: Timer,
     promise: 'The network lies, clocks drift, and "the other machine" is always a rumor.',
-    lessons: 2,
-    exercises: 2,
-    hours: 1,
+    lessons: 4,
+    exercises: 4,
+    hours: 2,
   },
   {
     code: 'T1',
@@ -37,9 +37,31 @@ export const TRACKS: TrackMeta[] = [
     color: '#A78BFA',
     glyph: Vote,
     promise: 'Getting unreliable machines to agree — elections, logs, and the quorum.',
-    lessons: 1,
-    exercises: 1,
+    lessons: 3,
+    exercises: 3,
+    hours: 2,
+  },
+  {
+    code: 'T2',
+    id: 't2',
+    name: 'Consistency & Transactions',
+    color: '#3EF2A4',
+    glyph: Database,
+    promise: '"Consistent" is a contract, not a vibe — and atomicity across machines is a promise made by a coordinator that can die mid-sentence.',
+    lessons: 2,
+    exercises: 2,
     hours: 1,
+  },
+  {
+    code: 'T3',
+    id: 't3',
+    name: 'Production Anatomy',
+    color: '#5CA8FF',
+    glyph: ScanSearch,
+    promise: 'Reading real systems — etcd to TigerBeetle, Jepsen reports, and the telemetry of a dying cluster.',
+    lessons: 3,
+    exercises: 3,
+    hours: 2,
   },
 ]
 

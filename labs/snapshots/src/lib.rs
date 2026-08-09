@@ -121,6 +121,10 @@ impl Driver {
             }
         }
         for i in 0..N {
+            // leaders don't run election timers — they're not waiting for a heartbeat
+            if self.nodes[i].role() == Role::Leader {
+                continue;
+            }
             self.silent[i] += 1;
             let mut x = self.streams[i];
             x ^= x >> 12;

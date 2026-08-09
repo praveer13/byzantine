@@ -1,3 +1,3 @@
 [workspace]
-members = ["kit", "echo-node", "kv-store", "election", "raft-log", "snapshots"]
+members = ["kit", "echo-node", "kv-store", "election", "raft-log", "snapshots", "linearizable-kv"]
 resolver = "2"

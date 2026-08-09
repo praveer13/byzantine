@@ -38,6 +38,7 @@ import {
 } from '@/lib/progress'
 import type { ProgressState } from '@/lib/progress'
 import { TRACKS, CAPSTONE, ORDERED_LESSON_IDS, SIMS } from '@/lib/tracks'
+import { FORGE_LABS } from '@/data/labs'
 import ProgressRing from '@/components/ProgressRing'
 import { cn } from '@/lib/utils'
 
@@ -200,7 +201,7 @@ const ACHIEVEMENTS: AchievementDef[] = [
 function RankPanel() {
   const xp = useProgress((s) => s.xp)
   const lessons = useProgress((s) => s.lessons)
-  const sims = useProgress((s) => s.sims)
+  const labs = useProgress((s) => s.labs)
   const rank = rankForXp(xp)
   const next = nextRank(xp)
   const ref = useRef<HTMLDivElement>(null)
@@ -211,7 +212,7 @@ function RankPanel() {
   const quizAvg = scored.length
     ? Math.round((scored.reduce((a, l) => a + (l.quizScore ?? 0), 0) / scored.length) * 100)
     : 0
-  const labTasks = Object.values(sims).reduce((a, s) => a + s.tasksDone.length, 0)
+  const labsDone = Object.values(labs).filter((l) => l.done).length
   const pctToNext = next ? Math.min(100, (xp / next.minXp) * 100) : 100
 
   return (
@@ -246,7 +247,7 @@ function RankPanel() {
         </div>
       </div>
       <p className="mt-4 border-t border-line pt-3 font-mono text-[11px] text-text-3">
-        lessons {done}/{TOTAL_LESSONS} · quizzes {quizAvg}% · lab tasks {labTasks}/36
+        lessons {done}/{TOTAL_LESSONS} · quizzes {quizAvg}% · labs {labsDone}/{FORGE_LABS.length}
       </p>
     </motion.div>
   )

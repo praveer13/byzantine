@@ -14,10 +14,10 @@ except nothing at all.
 
 ```sh
 rustup target add wasm32-unknown-unknown   # one time
-cd rust-allocator
+cd echo-node
 cargo test                                  # red → green
 cargo build --release --target wasm32-unknown-unknown
-# drop target/wasm32-unknown-unknown/release/rust_allocator.wasm
+# drop target/wasm32-unknown-unknown/release/echo_node.wasm
 # onto the lab page
 ```
 
@@ -39,7 +39,7 @@ quota, not ours.
 
 1. **Read the brief** on the lab page.
 2. **Edit the one file** with `TODO(you)` markers. Nothing else.
-3. `cargo test` until all six checks are green. The terminal and the site
+3. `cargo test` until every check is green. The terminal and the site
    run the identical suite — if it's green here, it's green there.
 4. **Build the wasm** (`--release`, target `wasm32-unknown-unknown`).
 5. **Drop the `.wasm` onto the lab page.** It runs in your browser, in a
@@ -52,12 +52,15 @@ A `todo!()` left in your code makes the module trap — the site shows
 
 | # | lab | track | you build |
 |---|-----|-------|-----------|
-| 01 | `rust-allocator/` | T1 | free-list allocator: split, coalesce, align, reuse |
-| 02 | `kv-block-manager/` | T5 | vLLM's block manager: block tables, fork+CoW, refcounts |
-| 03 | `bpe-tokenizer/` | T5 | byte-level BPE: ranked merges, UTF-8 roundtrip, exact-id contract |
-| 04 | `mpmc-queue/` | T2 | Vyukov MPMC: sequence numbers, CAS cursors, + a native race fuzzer |
-| 05 | `toy-executor/` | T3 | async executor: wakers, poll loop, block_on, nested spawn |
-| 06 | `batching-scheduler/` | T5 | admission policy: goodput under SLO, convoys, aging, headroom |
+| 01 | `echo-node/` | T0 | idempotent receiver: dedup table, response cache, exactly-once effect |
+| 02 | `kv-store/` | T0 | sequential KV: versions, compare-and-set, delete-as-mutation-attempt |
+| 03 | `election/` | T1 | Raft leader election: terms, votes, quorum, fencing |
+| 04 | `raft-log/` | T1 | log replication: AppendEntries, commit rule, majority safety |
+| 05 | `snapshots/` | T1 | log compaction: snapshot the committed prefix, InstallSnapshot catch-up |
+| 06 | `linearizable-kv/` | T2 | the capstone: a linearizable KV over your own Raft, graded under partitions |
+
+Labs build on each other like real life: each template from 03 up says
+"paste your previous lab's solution, add X".
 
 ## How grading works (honesty box)
 
@@ -81,7 +84,7 @@ That repo — with its commit history — IS your portfolio artifact. Push it
 to a private GitHub repo and your work survives any laptop.
 
 **Your progress → JSON snapshot.** Everything the site tracks (lessons,
-quizzes, lab completions, XP, achievements, Fleet Week scores + design
-doc) lives in your browser's localStorage. Export a snapshot anytime from
-the **Progress page → data ownership → Export**, and re-import it on any
+quizzes, lab completions, XP, achievements, drill scores) lives in your
+browser's localStorage. Export a snapshot anytime from the
+**Progress page → data ownership → Export**, and re-import it on any
 device/browser. Local by default, portable on demand.
