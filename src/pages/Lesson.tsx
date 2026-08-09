@@ -740,7 +740,7 @@ function LessonView({ lesson }: { lesson: Lesson }) {
               </Link>
             ) : (
               <Link
-                to="/capstone"
+                to="/labs/linearizable-kv"
                 className="group rounded-lg border border-transparent bg-grad-brand p-[1px] transition-all duration-180 hover:-translate-y-0.5"
               >
                 <span className="block rounded-[7px] bg-surface-1 p-4 text-right">
@@ -750,7 +750,7 @@ function LessonView({ lesson }: { lesson: Lesson }) {
                   <span className="mt-1.5 block font-display text-body-sm font-medium text-text-1">
                     {CAPSTONE.code} · {CAPSTONE.name}
                   </span>
-                  <span className="mt-1 block font-mono text-[10px] text-text-3">the whole address space</span>
+                  <span className="mt-1 block font-mono text-[10px] text-text-3">the whole arc, under partitions</span>
                 </span>
               </Link>
             )}

@@ -67,19 +67,6 @@ const RANK_FLAVOR: Record<string, string> = {
   ROOT: 'kernel privileges: you are the kernel now',
 }
 
-const CAPSTONE_FLAGS_KEY = 'kernelspace:capstone:flags'
-
-function readCapstoneFlags(): { hints: boolean; optimizer: boolean } {
-  try {
-    const raw = localStorage.getItem(CAPSTONE_FLAGS_KEY)
-    if (!raw) return { hints: false, optimizer: false }
-    const p = JSON.parse(raw)
-    return { hints: !!p.hints, optimizer: !!p.optimizer }
-  } catch {
-    return { hints: false, optimizer: false }
-  }
-}
-
 /* ---------------- achievements catalog (progress.md §5) ---------------- */
 
 interface AchievementDef {
@@ -96,6 +83,8 @@ const trackDone = (s: ProgressState, tid: string, n: number) =>
     ([id, l]) => id.startsWith(`${tid}.`) && l.status === 'done',
   ).length >= n
 
+const labDone = (s: ProgressState, id: string) => s.labs[id]?.done ?? false
+
 const ACHIEVEMENTS: AchievementDef[] = [
   {
     id: 'first-boot',
@@ -106,85 +95,68 @@ const ACHIEVEMENTS: AchievementDef[] = [
     derived: (s) => Object.values(s.lessons).some((l) => l.status === 'done'),
   },
   {
-    id: 'cache-warm',
-    name: 'cache warm',
-    cond: 'complete T0 — Foundations',
+    id: 'track-t0',
+    name: 'failure-native',
+    cond: 'complete T0 — Failure & Time',
     icon: Layers,
-    color: '#34D399',
-    derived: (s) => trackDone(s, 't0', 5),
-  },
-  {
-    id: 'heap-whisperer',
-    name: 'heap whisperer',
-    cond: 'T1 done + allocator tasks',
-    icon: Braces,
-    color: '#FBBF24',
-    derived: (s) =>
-      trackDone(s, 't1', 7) && (s.sims['sim-allocator']?.tasksDone.length ?? 0) > 0,
-  },
-  {
-    id: 'kernel-mind',
-    name: 'kernel mind',
-    cond: 'T2 done · exam ≥ 80%',
-    icon: Cpu,
     color: '#22D3EE',
-    derived: (s) => trackDone(s, 't2', 8) && (s.lessons['t2.l8']?.quizScore ?? 0) >= 0.8,
+    derived: (s) => trackDone(s, 't0', 4),
   },
   {
-    id: 'fearless-borrower',
-    name: 'fearless borrower',
-    cond: 'complete T3 — Rust',
-    icon: ShieldCheck,
-    color: '#F97316',
-    derived: (s) => trackDone(s, 't3', 7),
+    id: 'track-t1',
+    name: 'quorum mind',
+    cond: 'complete T1 — Consensus',
+    icon: Braces,
+    color: '#A78BFA',
+    derived: (s) => trackDone(s, 't1', 3),
   },
   {
-    id: 'silicon-eye',
-    name: 'silicon eye',
-    cond: 'complete T4 — GPU',
+    id: 'track-t2',
+    name: 'contract reader',
+    cond: 'complete T2 — Consistency & Transactions',
+    icon: Cpu,
+    color: '#3EF2A4',
+    derived: (s) => trackDone(s, 't2', 2),
+  },
+  {
+    id: 'track-t3',
+    name: 'production anatomist',
+    cond: 'complete T3 — Production Anatomy',
+    icon: Server,
+    color: '#5CA8FF',
+    derived: (s) => trackDone(s, 't3', 3),
+  },
+  {
+    id: 'forge-first',
+    name: 'first forge',
+    cond: 'pass any forge lab',
+    icon: Cog,
+    color: '#FBBF24',
+    derived: (s) => Object.values(s.labs).some((l) => l.done),
+  },
+  {
+    id: 'raft-arc',
+    name: 'the raft arc',
+    cond: 'election + raft-log + snapshots green',
     icon: Grid3X3,
     color: '#A78BFA',
-    derived: (s) => trackDone(s, 't4', 6),
+    derived: (s) => labDone(s, 'election') && labDone(s, 'raft-log') && labDone(s, 'snapshots'),
   },
   {
-    id: 'serving-engineer',
-    name: 'serving engineer',
-    cond: 'complete T5 — LLM serving',
-    icon: Server,
-    color: '#FB7185',
-    derived: (s) => trackDone(s, 't5', 7),
+    id: 'linearizable',
+    name: 'a response is a proof',
+    cond: 'finish the capstone — linearizable-kv green',
+    icon: ShieldCheck,
+    color: '#FBBF24',
+    derived: (s) => labDone(s, 'linearizable-kv'),
   },
   {
-    id: 'engine-builder',
-    name: 'engine builder',
-    cond: 'finish the capstone',
-    icon: Cog,
-    color: '#3EF2A4',
-    derived: (s) => s.capstone.stepsDone.length >= 7,
-  },
-  {
-    id: 'no-hints',
-    name: 'no hints',
-    cond: 'capstone, zero solutions viewed',
-    icon: Sparkles,
-    color: '#3EF2A4',
-    derived: (s) => s.capstone.stepsDone.length >= 7 && !readCapstoneFlags().hints,
-  },
-  {
-    id: 'optimizer',
-    name: 'optimizer',
-    cond: 'step-5 speedup ≥ 10×',
+    id: 'incident-commander',
+    name: 'incident commander',
+    cond: 'diagnose all three partition drills',
     icon: Gauge,
-    color: '#FFB224',
-    derived: () => readCapstoneFlags().optimizer,
-  },
-  {
-    id: 'polyglot',
-    name: 'polyglot',
-    cond: 'view code in all 4 languages',
-    icon: Flame,
-    color: '#5CA8FF',
-    derived: (s) => s.achievements.includes('polyglot'),
+    color: '#FB7185',
+    derived: (s) => s.fleetWeek.actsDone.includes('drills'),
   },
   {
     id: 'week-uptime',
@@ -193,6 +165,18 @@ const ACHIEVEMENTS: AchievementDef[] = [
     icon: Flame,
     color: '#FF5C6C',
     derived: (s) => selectStreak(s) >= 7,
+  },
+  {
+    id: 'byzantine-general',
+    name: 'byzantine general',
+    cond: 'every lesson done + every lab green',
+    icon: Sparkles,
+    color: '#FFB224',
+    derived: (s) =>
+      Object.values(s.lessons).filter((l) => l.status === 'done').length >= TOTAL_LESSONS &&
+      ['echo-node', 'kv-store', 'election', 'raft-log', 'snapshots', 'linearizable-kv'].every((id) =>
+        labDone(s, id),
+      ),
   },
 ]
 
@@ -354,9 +338,12 @@ function KpiBand() {
 
 function TrackBreakdown() {
   const lessons = useProgress((s) => s.lessons)
-  const stepsDone = useProgress((s) => s.capstone.stepsDone)
+  const labCapDone = useProgress((s) => s.labs['linearizable-kv']?.done ?? false)
+  const drillsDone = useProgress((s) => s.fleetWeek.actsDone.includes('drills'))
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { once: true, margin: '-10% 0px' })
+
+  const capstoneDone = (labCapDone ? 1 : 0) + (drillsDone ? 1 : 0)
 
   const nextId = ORDERED_LESSON_IDS.find((id) => lessons[id]?.status !== 'done') ?? null
 
@@ -412,18 +399,18 @@ function TrackBreakdown() {
               </motion.div>
             )
           })}
-          {/* capstone row */}
+          {/* capstone row: lab 06 + the drills, weighted equally */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={inView ? { opacity: 1, y: 0 } : undefined}
             transition={{ duration: 0.4, delay: 0.6 }}
           >
             <Link
-              to="/capstone"
+              to="/labs/linearizable-kv"
               className="group flex items-center gap-4 rounded-md border border-line bg-surface-1 px-4 py-3 transition-colors duration-180 hover:border-line-bright hover:bg-surface-2"
             >
               <ProgressRing
-                value={Math.round((stepsDone.length / 7) * 100)}
+                value={Math.round((capstoneDone / 2) * 100)}
                 size={40}
                 strokeWidth={3}
               />
@@ -437,12 +424,12 @@ function TrackBreakdown() {
                 <motion.div
                   className="h-full rounded-full bg-grad-brand"
                   initial={{ width: 0 }}
-                  animate={inView ? { width: `${(stepsDone.length / 7) * 100}%` } : undefined}
+                  animate={inView ? { width: `${(capstoneDone / 2) * 100}%` } : undefined}
                   transition={{ duration: 0.8, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
                 />
               </div>
               <span className="w-20 shrink-0 text-right font-mono text-[11px] text-text-3">
-                {stepsDone.length}/7 · {Math.round((stepsDone.length / 7) * 100)}%
+                {capstoneDone}/2 · {Math.round((capstoneDone / 2) * 100)}%
               </span>
             </Link>
           </motion.div>

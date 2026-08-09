@@ -2,9 +2,9 @@ import { Link } from 'react-router'
 
 const LEARN_LINKS = [
   { to: '/curriculum', label: 'Curriculum' },
-  { to: '/lab', label: 'Lab' },
-  { to: '/capstone', label: 'Capstone' },
-  { to: '/glossary', label: 'Glossary' },
+  { to: '/cluster', label: 'Cluster' },
+  { to: '/labs', label: 'Labs' },
+  { to: '/drills', label: 'Drills' },
   { to: '/progress', label: 'Progress' },
 ]
 
@@ -31,10 +31,10 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <Link to="/" className="font-mono text-[15px] font-medium text-text-1">
-              [<span className="wordmark-cursor" />]_kernelspace
+              [<span className="wordmark-cursor" />]_byzantine
             </Link>
             <p className="mt-4 max-w-xs font-display text-h4 text-text-1">
-              From cache lines to continuous batching.
+              The network lies. Build systems that survive it.
             </p>
             <p className="mt-3 max-w-xs text-body-sm text-text-3">
               Runs 100% in your browser. Your progress never leaves <code>localStorage</code>.
@@ -79,7 +79,7 @@ export default function Footer() {
 
         <div className="mt-14 flex flex-col gap-3 border-t border-line pt-6 font-mono text-[11px] tracking-wide text-text-3 sm:flex-row sm:items-center sm:justify-between">
           <span>built static · deployed on the edge · no tracking</span>
-          <span>© {new Date().getFullYear()} kernelspace</span>
+          <span>© {new Date().getFullYear()} byzantine</span>
         </div>
       </div>
     </footer>

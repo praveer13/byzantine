@@ -1,7 +1,7 @@
 /**
  * Curriculum overview (curriculum.md): progress header with 120px ring,
  * the address-space stack (capstone on top → T0 base; mobile reverses to
- * T0→T5 via flex-col-reverse), expandable track layers with LessonRows,
+ * T0→T3 via flex-col-reverse), expandable track layers with LessonRows,
  * dashed connectors with `requires` notes, "not sure where to start" strip
  * with a 5-question placement modal.
  */
@@ -26,6 +26,7 @@ import { getTrack, TRACKS, CAPSTONE } from '@/lib/tracks'
 import {
   ALL_LESSONS,
   ORDERED_LESSON_IDS,
+  TOTAL_LESSON_COUNT,
   TRACK_EXTRAS,
   lessonsForTrack,
   simsForTrack,
@@ -43,44 +44,44 @@ const EASE = [0.16, 1, 0.3, 1] as [number, number, number, number]
 
 const PLACEMENT: { q: string; options: string[]; correct: number }[] = [
   {
-    q: 'A pointer in C is best described as…',
-    options: ['An object reference with methods', 'An integer naming a byte address in memory', 'A garbage-collected handle', 'A database foreign key'],
+    q: 'A node you can\'t reach is best described as…',
+    options: ['Crashed', 'Partitioned', 'Slow', 'You cannot tell — that is the point'],
+    correct: 3,
+  },
+  {
+    q: 'Two events on different machines can be ordered reliably by…',
+    options: ['Wall-clock timestamps', 'Happens-before via message passing (Lamport clocks)', 'Whichever logs first', 'NTP sync'],
     correct: 1,
   },
   {
-    q: 'When the CPU needs data absent from all caches, it pays roughly…',
-    options: ['1 ns', '10 ns', '100 ns (DRAM)', '10 ms'],
+    q: 'A 5-node Raft cluster tolerates how many simultaneous failures?',
+    options: ['1', '2 — a majority must remain', '3', '4'],
+    correct: 1,
+  },
+  {
+    q: 'A leader may advance commit_index over an entry once…',
+    options: [
+      'It is written to the leader\'s disk',
+      'Any follower has it',
+      'A majority holds an entry from the leader\'s CURRENT term (at or past it)',
+      'The client retries succeed',
+    ],
     correct: 2,
   },
   {
-    q: 'A page fault occurs when…',
+    q: 'Linearizability means…',
     options: [
-      'The printer jams',
-      'A virtual address has no mapped physical frame and the kernel must intervene',
-      'The TLB is flushed by a context switch',
-      'A malloc call returns NULL',
+      'Operations are eventually applied in order',
+      'Every read is served by the node with the longest log',
+      'Each operation takes effect atomically between its invocation and response — reads never go backward',
+      'All nodes share a wall clock',
     ],
-    correct: 1,
-  },
-  {
-    q: 'Rust\'s borrow rule that kills data races at compile time is…',
-    options: ['One reference per value', 'Many &T (shared) XOR one &mut T (exclusive)', 'References must be static', 'Mutexes on every type'],
-    correct: 1,
-  },
-  {
-    q: 'In LLM serving, the KV cache stores…',
-    options: [
-      'Model weights on disk',
-      'Per-token key/value attention tensors so decode avoids recomputing the past',
-      'Tokenized prompts',
-      'GPU driver state',
-    ],
-    correct: 1,
+    correct: 2,
   },
 ]
 
 function recommendFor(score: number): TrackId {
-  return (['t0', 't1', 't2', 't3', 't4', 't5'] as TrackId[])[Math.min(score, 5)]
+  return (['t0', 't1', 't2', 't3'] as TrackId[])[Math.min(score, 3)]
 }
 
 function PlacementModal({ onClose }: { onClose: () => void }) {
@@ -356,8 +357,8 @@ export default function CurriculumPage() {
             <p className="font-mono text-label uppercase text-text-3">0x02 — address space map</p>
             <h1 className="mt-3 font-display text-display-lg text-text-1">Curriculum</h1>
             <p className="mt-4 max-w-measure text-body-lg text-text-2">
-              Six tracks, forty lessons, one capstone. The stack reads bottom to top: memory physics at the
-              base, production serving at the summit. Every layer is unlocked — the order is the point.
+              Four tracks, twelve lessons, one capstone. The stack reads bottom to top: failure physics at the
+              base, production anatomy at the summit. Every layer is unlocked — the order is the point.
             </p>
             {/* legend */}
             <div className="mt-6 flex flex-wrap items-center gap-4 font-mono text-[11px] text-text-3">
@@ -404,7 +405,7 @@ export default function CurriculumPage() {
                 <div>
                   <p className="font-display text-stat text-text-1">
                     {doneCount}
-                    <span className="text-h4 text-text-3">/40</span>
+                    <span className="text-h4 text-text-3">/{TOTAL_LESSON_COUNT}</span>
                   </p>
                   <p className="font-mono text-[11px] text-text-3">lessons allocated</p>
                 </div>
@@ -435,10 +436,10 @@ export default function CurriculumPage() {
           <div className="relative">
             <div className="flex items-center gap-3 py-1 pl-6">
               <span className="h-6 border-l border-dashed border-line-bright" />
-              <span className="font-mono text-[10px] text-text-3">requires T5 · the whole stack</span>
+              <span className="font-mono text-[10px] text-text-3">requires T0–T3 · the whole arc</span>
             </div>
             <Link
-              to="/capstone"
+              to="/labs/linearizable-kv"
               className="group block rounded-lg border border-transparent bg-grad-brand p-[1px] transition-all duration-180 hover:-translate-y-0.5"
             >
               <span className="flex items-center gap-4 rounded-[7px] bg-surface-1 px-5 py-4">
@@ -449,10 +450,10 @@ export default function CurriculumPage() {
                     <span className="font-display text-h4 text-text-1">{CAPSTONE.name}</span>
                   </span>
                   <span className="mt-0.5 hidden truncate text-body-sm text-text-3 md:block">
-                    the whole address space — build a toy inference engine end to end
+                    the whole arc — a linearizable KV over your own Raft, graded under partitions
                   </span>
                 </span>
-                <span className="hidden shrink-0 font-mono text-[11px] text-text-3 lg:block">7 steps</span>
+                <span className="hidden shrink-0 font-mono text-[11px] text-text-3 lg:block">lab 06 + drills</span>
                 <ArrowRight size={18} className="shrink-0 text-text-3 transition-transform duration-150 group-hover:translate-x-1 group-hover:text-accent" />
               </span>
             </Link>
@@ -477,22 +478,22 @@ export default function CurriculumPage() {
           <div className="grid gap-4 md:grid-cols-3">
             {[
               {
-                who: 'Total beginner to systems',
-                path: 'Start at the base: latency numbers, cache lines, your runtime.',
-                cta: 'T0 · L1 — Why systems',
+                who: 'Total beginner to distributed systems',
+                path: 'Start at the base: the network lies, clocks drift, failure is partial.',
+                cta: 'T0 · L1 — Partial failure',
                 to: `/lesson/${ORDERED_LESSON_IDS[0]}`,
               },
               {
-                who: 'You know some C / Rust',
-                path: 'Skip to the OS layer: paging, eviction, scheduling — the vLLM exam.',
-                cta: 'T2 · L1 — Processes & threads',
+                who: 'You know some Raft already',
+                path: 'Skip to the contracts: consistency models, transactions, production anatomy.',
+                cta: 'T2 · L1 — Consistency models',
                 to: `/lesson/t2.l1`,
               },
               {
-                who: 'Here for vLLM only',
-                path: 'Straight to serving systems — but T2/T4 holes will show. Fair warning.',
-                cta: 'T5 · L4 — KV cache math',
-                to: '/lesson/t5.l4',
+                who: 'Here for the capstone only',
+                path: 'Straight to the linearizable KV lab — but election and log holes will show. Fair warning.',
+                cta: 'lab 06 — linearizable-kv',
+                to: '/labs/linearizable-kv',
                 warn: true,
               },
             ].map((c) => (

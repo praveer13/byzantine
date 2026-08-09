@@ -30,7 +30,7 @@ export default function Home() {
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <Link
-            to="/curriculum"
+            to="/lesson/t0.l1"
             className="inline-flex items-center gap-2 rounded-md border border-accent/60 bg-accent/10 px-5 py-2.5 font-mono text-sm text-accent transition-colors hover:bg-accent/20"
           >
             start the curriculum <ArrowRight className="h-4 w-4" />
@@ -77,17 +77,18 @@ export default function Home() {
           </Link>
         </motion.div>
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.48 }}>
-          <div className="block rounded-lg border border-line bg-surface-1 p-6 opacity-80">
+          <Link to="/labs/linearizable-kv" className="group block rounded-lg border border-amber/40 bg-surface-1 p-6 transition-colors hover:border-amber/70">
             <div className="flex items-center gap-2.5">
               <ShieldCheck className="h-5 w-5 text-amber" />
-              <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-text-3">the capstone · ahead</p>
+              <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-text-3">the capstone · live</p>
             </div>
             <p className="mt-3 text-h4 font-medium text-text-1">A linearizable KV store</p>
             <p className="mt-2 text-body-sm text-text-2">
-              Your Raft, your log, your state machine — replicated across The Cluster and graded
-              while the knife falls. It arrives with the rest of T1.
+              Your Raft, your log, your state machine — replicated across five hostile nodes and
+              graded while the partition knife falls. Plus three incident drills to prove you can read the wreckage.
             </p>
-          </div>
+            <p className="mt-4 font-mono text-[11px] text-amber">lab 06 + drills <ArrowRight className="inline h-3 w-3" /></p>
+          </Link>
         </motion.div>
       </div>
     </div>
