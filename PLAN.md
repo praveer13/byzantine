@@ -63,8 +63,15 @@ backward; leader's match_index no longer double-counts self.
    200s on all routes, zips verified to ship TEMPLATES not solutions.
    Headless ABI verify (bun scripts/verify-wasm-lab.ts): all 5 new
    solution wasms pass, all 5 template wasms trap as designed.
-   ⚠️ NOT done: real browser pass over each lab page upload flow.
-6. **Push + deploy + verify live** ← NEXT
+   ✅ PLAYWRIGHT E2E on the LIVE site (script kept at /tmp/pw/verify.mjs,
+   node at /tmp/node): all 34 routes render with zero js/asset errors;
+   all 6 lab pages accept their solution wasm → all-green report; all 6
+   reject the template with "not implemented yet"; cross-lab wasm →
+   "wrong lab module"; drills grade WRONG/CORRECT correctly + completion;
+   cluster sim renders. NB: deep links return 404 STATUS by design (GH
+   Pages SPA fallback via 404.html) — the test filters that one document.
+6. ✅ Push + deploy + verify live — commit 5314109, deploy green, bundle
+   content-checked on byzantine.play.naigap.com.
 
 ## Design decisions (do not re-litigate)
 
@@ -127,13 +134,8 @@ backward; leader's match_index no longer double-counts self.
 
 ## RESUME POINT
 
-Everything is built and verified locally. Only the ship step remains:
-
-1. `git add -A && git commit` (lab arc 04–06 + fix, 9 lessons, drills page,
-   registries, zips, this PLAN) and `git push origin master` → deploy.yml →
-   GitHub Pages.
-2. Verify live: https://byzantine.play.naigap.com — /curriculum shows T0–T3
-   (12 lessons), /labs shows 6 labs with working zip downloads, /drills runs,
-   one lab page upload flow with a solution wasm (in /tmp, or rebuild).
-3. Optional polish later: real browser pass per lab page; dist chunk-size
-   warning (code-split); the Cluster sim could grow lab-06-style get().
+Everything is built, verified (including Playwright e2e on the live site),
+and deployed. The plan is complete. Optional polish later: code-split the
+767 kB bundle (vite chunk warning); the Cluster sim could grow a
+lab-06-style get() demo; /tmp wasms and /tmp/pw are tmpfs — rebuild with
+`cargo build --release --target wasm32-unknown-unknown` if needed.
