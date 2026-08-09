@@ -10,5 +10,33 @@ dependencies = [
 ]
 
 [[package]]
+name = "election"
+version = "0.1.0"
+dependencies = [
+ "kslab",
+]
+
+[[package]]
 name = "kslab"
 version = "0.1.0"
+
+[[package]]
+name = "kv-store"
+version = "0.1.0"
+dependencies = [
+ "kslab",
+]
+
+[[package]]
+name = "raft-log"
+version = "0.1.0"
+dependencies = [
+ "kslab",
+]
+
+[[package]]
+name = "snapshots"
+version = "0.1.0"
+dependencies = [
+ "kslab",
+]

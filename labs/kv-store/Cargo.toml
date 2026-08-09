@@ -1,0 +1,16 @@
+[package]
+name = "kv-store"
+version = "0.1.0"
+edition = "2021"
+description = "forge lab 02 — sequential KV store with mutation accounting (byzantine)"
+license = "MIT"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+kslab = { path = "../kit" }
+
+[profile.release]
+opt-level = 2
+debug = false
