@@ -293,7 +293,7 @@ function TrackLayer({
                     {sims.map(({ sim }) => (
                       <Link
                         key={sim.id}
-                        to={`/lab/${sim.id}`}
+                        to={`/${sim.id}`}
                         className="flex items-center gap-1.5 rounded-full border border-line bg-surface-2 px-2.5 py-1 font-mono text-[10px] text-text-2 transition-colors duration-150 hover:border-line-bright hover:text-text-1"
                       >
                         <sim.icon size={11} style={{ color: track.color }} />

@@ -551,7 +551,7 @@ function ExerciseView({
   const [noteOpen, setNoteOpen] = useState(false)
   const labSearch = new URLSearchParams({ from: lessonId })
   if (block.machine) labSearch.set('machine', block.machine)
-  const labUrl = `/lab/${block.simId}?${labSearch.toString()}`
+  const labUrl = `/${block.simId}?${labSearch.toString()}`
 
   return (
     <section className="my-8 overflow-hidden rounded-lg border border-line bg-surface-1" data-exercise={block.simId}>
@@ -585,7 +585,7 @@ function ExerciseView({
           <p className="mt-1 max-w-md text-body-sm text-text-2">{sim?.hook}</p>
         </div>
         <p className="font-mono text-[11px] text-text-3">
-          the live simulator runs at <span className="text-text-1">/lab/{block.simId}</span>
+          the live simulator runs at <span className="text-text-1">/{block.simId}</span>
         </p>
         <Link
           to={labUrl}

@@ -95,7 +95,7 @@ export default function Forge() {
                 transition={{ duration: 0.5, delay: 0.25 + i * 0.06, ease: [0.16, 1, 0.3, 1] }}
               >
                 <Link
-                  to={`/forge/${lab.id}`}
+                  to={`/labs/${lab.id}`}
                   className="group flex items-center gap-5 rounded-lg border border-line bg-surface-1 p-5 transition-colors duration-150 hover:border-accent/50"
                 >
                   <span

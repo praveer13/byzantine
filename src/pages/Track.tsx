@@ -246,7 +246,7 @@ function TrackView({ trackId }: { trackId: TrackId }) {
                   transition={{ duration: 0.18 }}
                   className="group overflow-hidden rounded-lg border border-line bg-surface-1 transition-colors duration-180 hover:border-line-bright hover:shadow-[0_12px_32px_rgba(0,0,0,.4)]"
                 >
-                  <Link to={`/lab/${sim.id}`} className="block">
+                  <Link to={`/${sim.id}`} className="block">
                     <div className="relative flex h-[140px] items-center justify-center bg-blueprint">
                       <span
                         className="flex h-14 w-14 items-center justify-center rounded-lg border bg-surface-2 transition-transform duration-300 group-hover:rotate-6"
